@@ -1,71 +1,142 @@
-# QualiSenior
+# 🏥 QualiSenior
 
-CRM para gerenciamento de pacientes e sessões de fisioterapia.
+> CRM inteligente para gerenciamento de pacientes e sessões de fisioterapia
 
-## 🚀 Stack
+Um sistema completo para clínicas de fisioterapia que oferece controle de pacientes, agendamento de sessões, gestão de profissionais e acompanhamento de tratamentos.
 
-- **Backend**: Node.js + Express + TypeScript
-- **Database**: PostgreSQL + Prisma ORM
-- **Frontend**: (em desenvolvimento)
+---
 
-## 📁 Estrutura
+## Tabela de Conteúdos
 
+- [Features](#features)
+- [Stack Tecnológico](#stack)
+- [Pré-requisitos](#pré-requisitos)
+- [Instalação](#instalação)
+- [Como Usar](#como-usar)
+- [Contribuição](#contribuição)
+
+---
+
+## Features
+
+- ✅ **Gerenciamento de Usuários** - Administradores, fisioterapeutas e pacientes
+- ✅ **Sistema de Roles** - Controle de permissões
+- ✅ **Gestão de Pacientes** - Perfil completo com histórico e status
+- ✅ **Agendamento de Sessões** - Controle de sessões (em progresso, concluídas, canceladas)
+- ✅ **Relatórios** - Acompanhamento de tratamentos por fisioterapeuta
+- ✅ **Gestão de Contratos** - Suporte para múltiplos tipos de contrato
+- ✅ **Controle de Pagamentos** - Status de pagamento
+
+---
+
+## Stack
+
+| Camada | Tecnologia |
+| ------ | ---------- |
+| **Backend** | Node.js + Express.js + TypeScript |
+| **Database** | PostgreSQL + Prisma ORM |
+| **Runtime** | tsx (TypeScript executor) |
+| **Containerização** | Docker + Docker Compose |
+| **Frontend** | (Em desenvolvimento) |
+
+---
+
+## Pré-requisitos
+
+- **Node.js** 18+
+- **npm** ou **yarn**
+- **Docker** e **Docker Compose**
+- **Git**
+
+---
+
+## Instalação
+
+### 1. Clone o repositório
+
+```bash
+git clone https://github.com/c13neto/qualisenior.git
+cd qualisenior
 ```
-backend/          # API e lógica de negócio
-└── prisma/       # Schema do banco de dados
-└── lib/          # Utilitários (Prisma client)
 
-frontend/         # Interface web (em desenvolvimento)
+### 2. Configure as variáveis de ambiente
 
-database/         # Docker Compose para o banco
+```bash
+cd backend
+cp .env.example .env
 ```
 
-## 🔧 Tecnologias
+Edite o `.env` com suas credenciais do banco de dados:
 
-- **Express.js** - Framework web API
-- **Prisma** - ORM TypeScript
-- **PostgreSQL** - Banco de dados
-- **tsx** - TypeScript executor
+```env
+DATABASE_URL="postgresql://usuario:senha@localhost:5432/database?schema=public"
+```
 
-## 📦 Dependências
+### 3. Inicie o banco de dados
 
-Instale as dependências do backend:
+```bash
+docker-compose -f database/compose.yaml up -d
+```
+
+### 4. Instale dependências e configure o banco
 
 ```bash
 cd backend
 npm install
+npx prisma migrate dev
 ```
 
-## ▶️ Como Rodar
+---
 
-### Desenvolvimento
+## Como Usar
+
+### Desenvolvimento (Backend)
 
 ```bash
 cd backend
 npm run dev
 ```
 
-O servidor rodará em `http://localhost:3000`
+### Gerenciar banco de dados
 
-### Banco de Dados
-
-Inicie o PostgreSQL com Docker:
+#### Ver dados visualmente
 
 ```bash
-docker-compose -f database/compose.yaml up
+npx prisma studio
 ```
 
-Execute as migrations:
+#### Criar nova migration
 
 ```bash
-cd backend
-npx prisma migrate dev
+npx prisma migrate dev --name sua_descricao
 ```
 
-## 👥 Features
+#### Resetar banco de dados (⚠️ Apenas desenvolvimento)
 
-- Gerenciamento de fisioterapeutas e pacientes
-- Sistema de roles (Admin, Fisio, Paciente)
-- Controle de sessões de fisioterapia
-- Relatórios e acompanhamento
-- Gestão de contratos e pagamentos
+```bash
+npx prisma migrate reset
+```
+
+---
+
+## Contribuição
+
+Contribuições são bem-vindas! Por favor:
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
+3. Commit suas mudanças (`git commit -m 'Add: MinhaFeature'`)
+4. Push para a branch (`git push origin feature/MinhaFeature`)
+5. Abra um Pull Request
+
+---
+
+## 📄 Licença
+
+ISC
+
+---
+
+## 📞 Suporte
+
+Para dúvidas ou problemas, abra uma issue no repositório.
