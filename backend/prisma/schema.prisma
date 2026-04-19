@@ -79,8 +79,8 @@ model User {
 
 model FisioModel {
   id             String          @id @default(uuid())
-  senior         Senior?
-  specialization Specialization?
+  senior         Senior
+  specialization Specialization
   status         UserStatus      @default(ATIVO)
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
