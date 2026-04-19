@@ -1,0 +1,162 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  SYSADMIN
+  ADMIN
+  FISIO
+  PACIENTE
+}
+
+enum UserStatus {
+  ATIVO
+  INATIVO
+  PENDENTE
+}
+
+enum SessionStatus {
+  PROGRESSO
+  CONCLUIDO
+  CANCELADO
+  PENDENTE
+}
+
+enum Specialization {
+  MOBILIDADE_EQUILIBRIO
+  MARCHA
+  RESPIRATORIO
+  UROGINECOLOGIA
+  GERONTOLOGIA
+}
+
+enum Contract {
+  QUALISENIOR
+  TRIAGE
+  CME
+}
+
+enum Senior {
+  ESTAGIARIO
+  JUNIOR
+  PLENO
+  SENIOR
+}
+
+enum PaymentStatus {
+  A_PAGAR
+  PAGO
+  ATRASADO
+  CANCELADO
+}
+
+enum Type {
+  FIXO
+  VARIAVEL
+}
+
+model User {
+  id         String     @id @default(uuid())
+  name       String
+  email      String     @unique
+  telephone  String     @unique
+  password   String
+  role       Role
+  status     UserStatus @default(ATIVO)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  whoCreated String
+  whoUpdated String[]
+
+  fisioAsUser   FisioModel?   @relation("FisioUser")
+  patientAsUser PatientModel? @relation("PatientUser")
+}
+
+model FisioModel {
+  id             String          @id @default(uuid())
+  senior         Senior?
+  specialization Specialization?
+  status         UserStatus      @default(ATIVO)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  whoCreated     String
+  whoUpdated     String[]
+
+  fisioId String @unique
+  fisio   User   @relation("FisioUser", fields: [fisioId], references: [id])
+
+  fisioAsSession Session[] @relation("FisioSession")
+  reportsAsFisio Report[]  @relation("FisioReports")
+}
+
+model PatientModel {
+  id             String         @id @default(uuid())
+  status         UserStatus     @default(ATIVO)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  whoCreated     String
+  whoUpdated     String[]
+
+  patientId String @unique
+  patient   User   @relation("PatientUser", fields: [patientId], references: [id])
+
+  patientAsSession Session[] @relation("PatientSession")
+}
+
+model Session {
+  id          String        @id @default(uuid())
+  daysOfWeek  String[]
+  hoursOfWork String[]
+  contract    Contract
+  specialization Specialization
+  status      SessionStatus @default(PROGRESSO)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  whoCreated  String
+  whoUpdated  String[]
+
+  fisioId String
+  fisio   FisioModel @relation("FisioSession", fields: [fisioId], references: [id], onDelete: Cascade)
+
+  patientId String
+  patient   PatientModel @relation("PatientSession", fields: [patientId], references: [id], onDelete: Cascade)
+
+  reportAsSession Report[] @relation("SessionReports")
+}
+
+model Report {
+  id          String        @id @default(uuid())
+  title       String
+  description String
+  date        DateTime
+  status      SessionStatus @default(CONCLUIDO)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  whoCreated  String
+  whoUpdated  String[]
+
+  fisioId String
+  fisio   FisioModel @relation("FisioReports", fields: [fisioId], references: [id], onDelete: Cascade)
+
+  sessionId String
+  session   Session @relation("SessionReports", fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+model Cost {
+  id          String        @id @default(uuid())
+  name        String
+  value       Decimal       @db.Decimal(10, 2)
+  type        Type
+  dateInitial DateTime
+  dateFinal   DateTime?
+  status      PaymentStatus @default(A_PAGAR)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  whoCreated  String
+  whoUpdated  String[]
+}
