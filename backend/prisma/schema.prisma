@@ -110,10 +110,12 @@ model PatientModel {
 
 model Session {
   id          String        @id @default(uuid())
-  daysOfWeek  String[]
-  hoursOfWork String[]
+  daysWeek  String[]
+  hoursWork String[]
   contract    Contract
   specialization Specialization
+  dayStart     DateTime
+  dayEnd       DateTime
   status      SessionStatus @default(PROGRESSO)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
