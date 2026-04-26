@@ -33,6 +33,8 @@ pnpm-debug.log*
 # O Prisma Client deve ser gerado no servidor, não comitado
 /backend/generated/
 /generated/
+/backend/dist/
+/dist/
 
 # ==========================================
 # 📝 LOGS E ARQUIVOS TEMPORÁRIOS DO PROJETO

@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  provider = "prisma-client"
+  output   = "../generated/prisma/"
 }
 
 datasource db {
@@ -61,72 +61,44 @@ enum Type {
 }
 
 model User {
-  id         String     @id @default(uuid())
-  name       String
-  email      String     @unique
-  telephone  String     @unique
-  password   String
-  role       Role
-  status     UserStatus @default(ATIVO)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  whoCreated String
-  whoUpdated String[]
-
-  fisioAsUser   FisioModel?   @relation("FisioUser")
-  patientAsUser PatientModel? @relation("PatientUser")
-}
-
-model FisioModel {
   id             String          @id @default(uuid())
-  senior         Senior
-  specialization Specialization
+  name           String
+  email          String          @unique
+  telephone      String          @unique
+  password       String
+  role           Role
+  seniority      Senior?
+  specialization Specialization?
   status         UserStatus      @default(ATIVO)
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   whoCreated     String
   whoUpdated     String[]
 
-  fisioId String @unique
-  fisio   User   @relation("FisioUser", fields: [fisioId], references: [id])
-
-  fisioAsSession Session[] @relation("FisioSession")
-  reportsAsFisio Report[]  @relation("FisioReports")
+  sessionAsFisio   Session[] @relation("FisioSession")
+  sessionAsPatient Session[] @relation("PatientSession")
+  reportsAsFisio   Report[]  @relation("FisioReports")
 }
 
-model PatientModel {
+model Session {
   id             String         @id @default(uuid())
-  status         UserStatus     @default(ATIVO)
+  daysWeek       String[]
+  hoursWork      String[]
+  contract       Contract
+  specialization Specialization
+  dayStart       DateTime
+  dayEnd         DateTime
+  status         SessionStatus  @default(PROGRESSO)
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   whoCreated     String
   whoUpdated     String[]
 
-  patientId String @unique
-  patient   User   @relation("PatientUser", fields: [patientId], references: [id])
-
-  patientAsSession Session[] @relation("PatientSession")
-}
-
-model Session {
-  id          String        @id @default(uuid())
-  daysWeek  String[]
-  hoursWork String[]
-  contract    Contract
-  specialization Specialization
-  dayStart     DateTime
-  dayEnd       DateTime
-  status      SessionStatus @default(PROGRESSO)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  whoCreated  String
-  whoUpdated  String[]
-
   fisioId String
-  fisio   FisioModel @relation("FisioSession", fields: [fisioId], references: [id], onDelete: Cascade)
+  fisio   User   @relation("FisioSession", fields: [fisioId], references: [id], onDelete: Cascade)
 
   patientId String
-  patient   PatientModel @relation("PatientSession", fields: [patientId], references: [id], onDelete: Cascade)
+  patient   User   @relation("PatientSession", fields: [patientId], references: [id], onDelete: Cascade)
 
   reportAsSession Report[] @relation("SessionReports")
 }
@@ -143,7 +115,7 @@ model Report {
   whoUpdated  String[]
 
   fisioId String
-  fisio   FisioModel @relation("FisioReports", fields: [fisioId], references: [id], onDelete: Cascade)
+  fisio   User   @relation("FisioReports", fields: [fisioId], references: [id], onDelete: Cascade)
 
   sessionId String
   session   Session @relation("SessionReports", fields: [sessionId], references: [id], onDelete: Cascade)
